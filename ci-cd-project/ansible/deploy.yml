@@ -1,0 +1,10 @@
+- name: Deploy app container
+  hosts: "{{ target_env | default('staging') }}"
+  become: true
+  vars:
+    docker_image: "{{ docker_image | default('your-dockerhub-username/my-app:latest') }}"
+    app_container_name: my-app
+    app_port: 8000
+  roles:
+    - app-deploy
+
