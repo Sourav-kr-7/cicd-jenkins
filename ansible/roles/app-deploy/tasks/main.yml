@@ -1,42 +1,26 @@
----
-- name: Ensure apt cache is updated
-  ansible.builtin.apt:
-    update_cache: true
-    cache_valid_time: 3600
+- name: Deploy Docker App
+  hosts: staging
 
-- name: Install Docker prerequisites
-  ansible.builtin.apt:
-    name:
-      - ca-certificates
-      - curl
-      - gnupg
-      - lsb-release
-    state: present
+  vars:
+    docker_image: "souravkr7/cicd-app:latest"
+    app_container_name: "myapp"
+    app_port: "8081"
 
-- name: Install Docker engine
-  ansible.builtin.apt:
-    name:
-      - docker.io
-    state: present
+  tasks:
 
-- name: Ensure docker service running
-  ansible.builtin.service:
-    name: docker
-    state: started
-    enabled: true
+    - name: Pull Docker image
+      command: docker pull {{ docker_image }}
 
-- name: Pull application image
-  community.docker.docker_image:
-    name: "{{ docker_image }}"
-    source: pull
+    - name: Stop old container
+      command: docker stop {{ app_container_name }}
+      ignore_errors: yes
 
-- name: Run/Update application container
-  community.docker.docker_container:
-    name: "{{ app_container_name }}"
-    image: "{{ docker_image }}"
-    state: started
-    restart_policy: always
-    ports:
-      - "{{ app_port }}:8000"
-    env:
-      APP_ENV: "{{ target_env | default('staging') }}"
+    - name: Remove old container
+      command: docker rm {{ app_container_name }}
+      ignore_errors: yes
+
+    - name: Run container
+      command: >
+        docker run -d -p {{ app_port }}:80
+        --name {{ app_container_name }}
+        {{ docker_image }}
