@@ -7,19 +7,17 @@
     app_port: "8082"
 
   tasks:
-    - name: Pull image
+    - name: Ensure latest image is pulled
       command: docker pull {{ docker_image }}
 
-    - name: Stop container
-      command: docker stop {{ app_container_name }}
-      ignore_errors: yes
-
-    - name: Remove container
-      command: docker rm {{ app_container_name }}
+    - name: Remove existing container if present
+      command: docker rm -f {{ app_container_name }}
       ignore_errors: yes
 
     - name: Run container
       command: >
-        docker run -d -p {{ app_port }}:8000
+        docker run -d
+        -p {{ app_port }}:8000
         --name {{ app_container_name }}
+        --restart always
         {{ docker_image }}
