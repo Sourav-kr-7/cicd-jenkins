@@ -56,16 +56,15 @@ pipeline {
         }
 
         stage('Deploy to Staging') {
-    steps {
-        bat '''
-        wsl bash -c "cd /mnt/c/Users/Sourav/.jenkins/workspace/github-auto-ci_cicd-jenkins_main && ls && ansible-playbook -i ansible/inventory.ini ansible/deploy.yml"
-        '''
-    }
-}
+            steps {
+                bat '''
+                wsl bash -c "cd $WORKSPACE_DIR && ansible-playbook -i ansible/inventory.ini ansible/deploy.yml"
+                '''
+            }
+        }
 
         stage('Integration Test (Staging)') {
             steps {
-                // ✅ Fixed quoting (single line bash)
                 bat '''
                 wsl bash -c "for i in {1..5}; do curl -f http://localhost:8081 && exit 0; sleep 3; done; exit 1"
                 '''
@@ -73,26 +72,20 @@ pipeline {
         }
 
         stage('Deploy to Production') {
-    steps {
-        bat '''
-        wsl bash -c "cd /mnt/c/Users/Sourav/.jenkins/workspace/github-auto-ci_cicd-jenkins_main && ansible-playbook -i ansible/inventory.ini ansible/deploy.yml"
-        '''
-    }
-}
+            steps {
+                bat '''
+                wsl bash -c "cd $WORKSPACE_DIR && ansible-playbook -i ansible/inventory.ini ansible/deploy.yml"
+                '''
+            }
+        }
 
         stage('Integration Test (Production)') {
-    steps {
-        bat '''
-        wsl bash -c "
-        for i in {1..10}; do
-          curl -f http://localhost:8082 && exit 0
-          echo 'Waiting for app...'
-          sleep 3
-        done
-        exit 1
-        "
-        '''
-    }
-}
+            steps {
+                // ✅ FIXED (single-line, safe quoting)
+                bat '''
+                wsl bash -c "for i in {1..10}; do curl -f http://localhost:8082 && exit 0; echo Waiting...; sleep 3; done; exit 1"
+                '''
+            }
+        }
     }
 }
