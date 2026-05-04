@@ -56,13 +56,12 @@ pipeline {
         }
 
         stage('Deploy to Staging') {
-            steps {
-                // ✅ Ensure correct directory before running ansible
-                bat '''
-                wsl bash -c "cd ${WORKSPACE_DIR} && ansible-playbook -i ansible/inventory.ini ansible/deploy.yml"
-                '''
-            }
-        }
+    steps {
+        bat '''
+        wsl bash -c "cd /mnt/c/Users/Sourav/.jenkins/workspace/github-auto-ci_cicd-jenkins_main && ls && ansible-playbook -i ansible/inventory.ini ansible/deploy.yml"
+        '''
+    }
+}
 
         stage('Integration Test (Staging)') {
             steps {
