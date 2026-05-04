@@ -90,5 +90,12 @@ pipeline {
                 '''
             }
         }
+        stage('Monitoring Check') {
+    steps {
+        bat '''
+        wsl bash -c "curl -f http://localhost:8082/metrics | grep http_requests_total"
+        '''
+    }
+}
     }
 }
