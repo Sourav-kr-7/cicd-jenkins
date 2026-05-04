@@ -55,36 +55,49 @@ pipeline {
             }
         }
 
+        // ✅ STAGING DEPLOY
         stage('Deploy to Staging') {
             steps {
-                bat '''
-                wsl bash -c "cd $WORKSPACE_DIR && ansible-playbook -i ansible/inventory.ini ansible/deploy.yml"
-                '''
+                bat """
+                wsl bash -c "cd ${WORKSPACE_DIR} && echo '--- DEBUG ---' && ls ansible && ansible-playbook -i ansible/inventory.ini ansible/deploy.yml"
+                """
             }
         }
 
+        // ✅ STAGING TEST
         stage('Integration Test (Staging)') {
             steps {
-                bat '''
-                wsl bash -c "for i in {1..5}; do curl -f http://localhost:8081 && exit 0; sleep 3; done; exit 1"
-                '''
+                bat """
+                wsl bash -c "for i in {1..5}; do 
+                    echo 'Checking app...'; 
+                    curl -f http://localhost:8081 && exit 0; 
+                    sleep 3; 
+                done; 
+                exit 1"
+                """
             }
         }
 
+        // ✅ PRODUCTION DEPLOY (same playbook, different host group)
         stage('Deploy to Production') {
             steps {
-                bat '''
-                wsl bash -c "cd $WORKSPACE_DIR && ansible-playbook -i ansible/inventory.ini ansible/deploy.yml"
-                '''
+                bat """
+                wsl bash -c "cd ${WORKSPACE_DIR} && ansible-playbook -i ansible/inventory.ini ansible/deploy.yml -l production"
+                """
             }
         }
 
+        // ✅ PRODUCTION TEST
         stage('Integration Test (Production)') {
             steps {
-                // ✅ FIXED (single-line, safe quoting)
-                bat '''
-                wsl bash -c "for i in {1..10}; do curl -f http://localhost:8082 && exit 0; echo Waiting...; sleep 3; done; exit 1"
-                '''
+                bat """
+                wsl bash -c "for i in {1..10}; do 
+                    echo 'Checking production app...'; 
+                    curl -f http://localhost:8082 && exit 0; 
+                    sleep 3; 
+                done; 
+                exit 1"
+                """
             }
         }
     }
