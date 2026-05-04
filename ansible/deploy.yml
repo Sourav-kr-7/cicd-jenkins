@@ -1,12 +1,10 @@
-- name: Deploy Docker App
-  hosts: localhost
-  connection: local
-  become: false   # ✅ VERY IMPORTANT
+- name: Deploy to Production
+  hosts: production
 
   vars:
     docker_image: "souravkr7/cicd-app:latest"
-    app_container_name: "myapp"
-    app_port: "8081"
+    app_container_name: "myapp-prod"
+    app_port: "8082"
 
   tasks:
     - name: Pull image
