@@ -1,5 +1,4 @@
-
-    pipeline {
+pipeline {
     agent any
 
     options {
@@ -48,11 +47,18 @@
         stage('Docker Push') {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    bat 'docker login -u %DOCKER_USER% -p %DOCKER_PASS%'
+                    bat 'echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin'
                 }
                 bat 'docker push %DOCKER_IMAGE%:%BUILD_NUMBER%'
                 bat 'docker push %DOCKER_IMAGE%:latest'
             }
         }
+
+        stage('Deploy') {
+            steps {
+                bat 'wsl ansible-playbook /mnt/c/Users/Sourav/.jenkins/workspace/github-auto-ci_cicd-jenkins_main/ansible/deploy.yml'
+            }
+        }
     }
 }
+    
