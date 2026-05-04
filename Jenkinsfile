@@ -56,8 +56,8 @@ pipeline {
 
         stage('Deploy to Staging') {
             steps {
-                // 🔥 Force disable sudo (very important)
-                bat 'wsl ansible-playbook -i ansible/inventory.ini ansible/deploy.yml --become=false'
+            
+                bat 'wsl ansible-playbook -i ansible/inventory.ini ansible/deploy.yml'
             }
         }
 
