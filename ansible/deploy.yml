@@ -1,7 +1,6 @@
 - name: Deploy Docker App
-  hosts: localhost
-  connection: local
-  # ❌ REMOVE become: yes
+  hosts: staging
+  become: yes
 
   vars:
     docker_image: "souravkr7/cicd-app:latest"
@@ -22,6 +21,6 @@
 
     - name: Run container
       command: >
-        docker run -d -p {{ app_port }}:80
+        docker run -d -p {{ app_port }}:8000
         --name {{ app_container_name }}
         {{ docker_image }}
