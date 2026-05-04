@@ -8,6 +8,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = "souravkr7/cicd-app"
         DOCKERFILE_PATH = "docker/Dockerfile"
+        WORKSPACE_DIR = "/mnt/c/Users/Sourav/.jenkins/workspace/github-auto-ci_cicd-jenkins_main"
     }
 
     triggers {
@@ -56,23 +57,33 @@ pipeline {
 
         stage('Deploy to Staging') {
             steps {
-            
-                bat 'wsl ansible-playbook -i ansible/inventory.ini ansible/deploy.yml'
+                // ✅ Ensure correct directory before running ansible
+                bat '''
+                wsl bash -c "cd ${WORKSPACE_DIR} && ansible-playbook -i ansible/inventory.ini ansible/deploy.yml"
+                '''
             }
         }
 
-        stage('Integration Test') {
+        stage('Integration Test (Staging)') {
             steps {
-                // 🔥 Add retry + delay (real-world practice)
+                // ✅ Fixed quoting (single line bash)
                 bat '''
-                wsl bash -c "
-                for i in {1..5}; do
-                  curl -f http://localhost:8081 && exit 0
-                  sleep 3
-                done
-                exit 1
-                "
+                wsl bash -c "for i in {1..5}; do curl -f http://localhost:8081 && exit 0; sleep 3; done; exit 1"
                 '''
+            }
+        }
+
+        stage('Deploy to Production') {
+            steps {
+                bat '''
+                wsl bash -c "cd ${WORKSPACE_DIR} && ansible-playbook -i ansible/inventory.ini ansible/deploy-prod.yml"
+                '''
+            }
+        }
+
+        stage('Integration Test (Production)') {
+            steps {
+                bat 'wsl curl -f http://localhost:8082 || exit 1'
             }
         }
     }
