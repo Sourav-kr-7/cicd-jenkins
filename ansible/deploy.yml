@@ -1,6 +1,6 @@
 - name: Deploy Docker App
-  hosts: staging
-  become: yes
+  hosts: localhost
+  connection: local   # important
 
   vars:
     docker_image: "souravkr7/cicd-app:latest"
