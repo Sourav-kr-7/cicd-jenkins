@@ -56,13 +56,23 @@ pipeline {
 
         stage('Deploy to Staging') {
             steps {
-                bat 'wsl ansible-playbook -i ansible/inventory.ini ansible/deploy.yml'
+                // 🔥 Force disable sudo (very important)
+                bat 'wsl ansible-playbook -i ansible/inventory.ini ansible/deploy.yml --become=false'
             }
         }
 
         stage('Integration Test') {
             steps {
-                bat 'wsl curl -f http://localhost:8081 || exit 1'
+                // 🔥 Add retry + delay (real-world practice)
+                bat '''
+                wsl bash -c "
+                for i in {1..5}; do
+                  curl -f http://localhost:8081 && exit 0
+                  sleep 3
+                done
+                exit 1
+                "
+                '''
             }
         }
     }
