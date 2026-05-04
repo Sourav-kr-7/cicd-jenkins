@@ -1,6 +1,7 @@
 - name: Deploy Docker App
   hosts: localhost
-  connection: local   # important
+  connection: local
+  become: false   # ✅ VERY IMPORTANT
 
   vars:
     docker_image: "souravkr7/cicd-app:latest"
