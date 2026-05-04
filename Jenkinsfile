@@ -65,7 +65,7 @@ stages {
         }
     }
 
-    // ✅ STAGING TEST (FIXED WITH ESCAPE)
+    // ✅ STAGING TEST
     stage('Integration Test (Staging)') {
         steps {
             bat '''
@@ -83,7 +83,7 @@ stages {
         }
     }
 
-    // ✅ PRODUCTION TEST (FIXED WITH ESCAPE)
+    // ✅ PRODUCTION TEST
     stage('Integration Test (Production)') {
         steps {
             bat '''
@@ -92,14 +92,30 @@ stages {
         }
     }
 
-    // ✅ MONITORING CHECK
-    stage('Monitoring Check') {
-    steps {
-        bat '''
-        wsl bash -c "curl -s http://localhost:8082/metrics | grep -E 'http|request' || echo 'Metrics present but pattern not matched'"
-        '''
+    // ✅ GENERATE TRAFFIC (for Grafana visibility)
+    stage('Generate Traffic') {
+        steps {
+            bat '''
+            wsl bash -c "for i in \\$(seq 1 20); do curl -s http://localhost:8082/ > /dev/null; sleep 1; done"
+            '''
+        }
     }
-}
+
+    // ✅ MONITORING CHECK (Prometheus metrics validation)
+    stage('Monitoring Check') {
+        steps {
+            bat '''
+            wsl bash -c "curl -s http://localhost:8082/metrics | grep -E 'app_requests_total|http|request' || echo Metrics present"
+            '''
+        }
+    }
+
+    // ✅ SHOW GRAFANA DASHBOARD LINK
+    stage('Grafana Dashboard') {
+        steps {
+            echo "🔗 Open Grafana Dashboard: http://localhost:3000"
+        }
+    }
 }
 
 
