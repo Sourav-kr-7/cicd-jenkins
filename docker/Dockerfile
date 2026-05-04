@@ -10,7 +10,7 @@ RUN pip install --no-cache-dir -r /app/requirements.txt
 
 COPY app/ /app/app/
 
-EXPOSE 8000
+-p 8081:5000
 
 ENV APP_ENV=container
 
