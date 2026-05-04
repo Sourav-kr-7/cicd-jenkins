@@ -73,12 +73,12 @@ pipeline {
         }
 
         stage('Deploy to Production') {
-            steps {
-                bat '''
-                wsl bash -c "cd ${WORKSPACE_DIR} && ansible-playbook -i ansible/inventory.ini ansible/deploy-prod.yml"
-                '''
-            }
-        }
+    steps {
+        bat '''
+        wsl bash -c "cd /mnt/c/Users/Sourav/.jenkins/workspace/github-auto-ci_cicd-jenkins_main && ansible-playbook -i ansible/inventory.ini ansible/deploy.yml"
+        '''
+    }
+}
 
         stage('Integration Test (Production)') {
             steps {
