@@ -1,5 +1,5 @@
-- name: Deploy to Production
-  hosts: production
+- name: Deploy Docker App
+  hosts: all
 
   vars:
     docker_image: "souravkr7/cicd-app:latest"
