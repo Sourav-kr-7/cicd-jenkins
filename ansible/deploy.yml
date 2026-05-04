@@ -1,7 +1,7 @@
 - name: Deploy Docker App
   hosts: localhost
   connection: local
-  become: yes
+  # ❌ REMOVE become: yes
 
   vars:
     docker_image: "souravkr7/cicd-app:latest"
