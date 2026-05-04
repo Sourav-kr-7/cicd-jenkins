@@ -64,16 +64,16 @@ pipeline {
             }
         }
 
-        // ✅ STAGING TEST
+        // ✅ STAGING TEST (FIXED)
         stage('Integration Test (Staging)') {
-    steps {
-        bat '''
-        wsl bash -c "for i in {1..5}; do curl -f http://localhost:8081 && exit 0; echo Checking...; sleep 3; done; exit 1"
-        '''
-    }
-}
+            steps {
+                bat '''
+                wsl bash -c "for i in $(seq 1 5); do echo Checking staging...; curl -f http://localhost:8081 && exit 0; sleep 3; done; exit 1"
+                '''
+            }
+        }
 
-        // ✅ PRODUCTION DEPLOY (same playbook, different host group)
+        // ✅ PRODUCTION DEPLOY
         stage('Deploy to Production') {
             steps {
                 bat """
@@ -82,13 +82,13 @@ pipeline {
             }
         }
 
-        // ✅ PRODUCTION TEST
-       stage('Integration Test (Production)') {
-    steps {
-        bat '''
-        wsl bash -c "for i in {1..10}; do curl -f http://localhost:8082 && exit 0; echo Checking production...; sleep 3; done; exit 1"
-        '''
-    }
-}
+        // ✅ PRODUCTION TEST (FIXED)
+        stage('Integration Test (Production)') {
+            steps {
+                bat '''
+                wsl bash -c "for i in $(seq 1 10); do echo Checking production...; curl -f http://localhost:8082 && exit 0; sleep 3; done; exit 1"
+                '''
+            }
+        }
     }
 }
