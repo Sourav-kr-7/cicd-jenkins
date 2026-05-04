@@ -68,7 +68,7 @@ pipeline {
         stage('Integration Test (Staging)') {
             steps {
                 bat '''
-                wsl bash -c "for i in $(seq 1 5); do echo Checking staging...; curl -f http://localhost:8081 && exit 0; sleep 3; done; exit 1"
+                wsl bash -c "for i in \\$(seq 1 5); do echo Checking staging...; curl -f http://localhost:8081 && exit 0; sleep 3; done; exit 1"
                 '''
             }
         }
@@ -86,7 +86,7 @@ pipeline {
         stage('Integration Test (Production)') {
             steps {
                 bat '''
-                wsl bash -c "for i in $(seq 1 10); do echo Checking production...; curl -f http://localhost:8082 && exit 0; sleep 3; done; exit 1"
+                wsl bash -c "for i in \\$(seq 1 10); do echo Checking production...; curl -f http://localhost:8082 && exit 0; sleep 3; done; exit 1"
                 '''
             }
         }
