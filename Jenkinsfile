@@ -81,9 +81,18 @@ pipeline {
 }
 
         stage('Integration Test (Production)') {
-            steps {
-                bat 'wsl curl -f http://localhost:8082 || exit 1'
-            }
-        }
+    steps {
+        bat '''
+        wsl bash -c "
+        for i in {1..10}; do
+          curl -f http://localhost:8082 && exit 0
+          echo 'Waiting for app...'
+          sleep 3
+        done
+        exit 1
+        "
+        '''
+    }
+}
     }
 }
