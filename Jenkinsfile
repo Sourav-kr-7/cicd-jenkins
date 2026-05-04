@@ -54,11 +54,16 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Deploy to Staging') {
             steps {
-                bat 'wsl ansible-playbook /mnt/c/Users/Sourav/.jenkins/workspace/github-auto-ci_cicd-jenkins_main/ansible/deploy.yml'
+                bat 'wsl ansible-playbook -i ansible/inventory.ini ansible/deploy.yml'
+            }
+        }
+
+        stage('Integration Test') {
+            steps {
+                bat 'wsl curl -f http://localhost:8081 || exit 1'
             }
         }
     }
 }
-    
