@@ -65,11 +65,11 @@ stages {
         }
     }
 
-    // ✅ STAGING TEST (FIXED - SINGLE LINE)
+    // ✅ STAGING TEST (FIXED WITH ESCAPE)
     stage('Integration Test (Staging)') {
         steps {
             bat '''
-            wsl bash -c "success=0; for i in $(seq 1 5); do echo Checking staging...; curl -s http://localhost:8081 > /dev/null && success=1 && break; sleep 3; done; if [ $success -eq 1 ]; then exit 0; else exit 1; fi"
+            wsl bash -c "success=0; for i in \\$(seq 1 5); do echo Checking staging...; curl -s http://localhost:8081 > /dev/null && success=1 && break; sleep 3; done; if [ \\$success -eq 1 ]; then exit 0; else exit 1; fi"
             '''
         }
     }
@@ -83,11 +83,11 @@ stages {
         }
     }
 
-    // ✅ PRODUCTION TEST (FIXED - SINGLE LINE)
+    // ✅ PRODUCTION TEST (FIXED WITH ESCAPE)
     stage('Integration Test (Production)') {
         steps {
             bat '''
-            wsl bash -c "success=0; for i in $(seq 1 10); do echo Checking production...; curl -s http://localhost:8082 > /dev/null && success=1 && break; sleep 3; done; if [ $success -eq 1 ]; then exit 0; else exit 1; fi"
+            wsl bash -c "success=0; for i in \\$(seq 1 10); do echo Checking production...; curl -s http://localhost:8082 > /dev/null && success=1 && break; sleep 3; done; if [ \\$success -eq 1 ]; then exit 0; else exit 1; fi"
             '''
         }
     }
